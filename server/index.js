@@ -1,8 +1,12 @@
+import https from "https";
+import fs from "fs";
+import createProxyMiddleware from "http-proxy-middleware";
+
+// import dependencies
 import express from "express";
 import session from "express-session";
 import passport from "passport";
 import mongoose from "mongoose";
-import passportLocalMongoose from "passport-local-mongoose";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import cors from "cors";
@@ -11,11 +15,12 @@ import cors from "cors";
 import User from "./models/User.js";
 import Secrets from "./models/Secrets.js";
 
+// initialize express
 const app = express();
 dotenv.config();
 
 // cors middleware
-app.use(cors());
+
 
 // middleware
 app.use(express.json());
@@ -29,9 +34,15 @@ app.use(
   }),
 );
 
+// https
+const httpsOptions = {
+  key: fs.readFileSync("./server.key"),
+  cert: fs.readFileSync("./server.cert"),
+};
+
 // start server
 const port = process.env.PORT || 3001;
-app.listen(port, () => {
+https.createServer(httpsOptions, app).listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
 
@@ -63,6 +74,7 @@ app.get("/api", (req, res) => {
 
 // New routes
 app.post("/register", (req, res) => {
+  console.log(req.body)
   User.findOne({ username: req.body.username }).then((user) => {
     if (user) {
       res.status(409).send("User already exists.");

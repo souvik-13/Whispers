@@ -29,8 +29,7 @@ const Register = () => {
         }, 3000);
       } catch (err) {
         if (err.response.status === 500) {
-          // console.log("There was a problem with the server");
-          console.log(err.response.data);
+          console.log("Error from database :", err);
         } else if (err.response.status === 409) {
           // console.log("User already exists");
           setUserExists(true);
